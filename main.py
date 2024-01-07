@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import json
 import os
+import pickle
 
 
 list_ops = np.array(['none', 'skip_connect', 'nor_conv_1x1', 'nor_conv_3x3', 'avg_pool_3x3'])
@@ -31,14 +32,15 @@ def main(path_file):
     for item in dict_ids:
         dict_temp.update({decode_arch(item): dict_ids[item]})
 
-    # for item in dict_temp:
-    #    print(item)
+    for item in dict_temp:
+       print(dict_temp[item])
 
 
     data_value = dict()
     pgd_acc = []
     d = 'cifar10'
     k = 'pgd@Linf'
+    #k = 'clean'
     m = 'accuracy'
     file = os.path.join('data/robustness-data/cifar10', f"{k}_{m}.json")
     with open(file, "r") as f:
@@ -52,13 +54,27 @@ def main(path_file):
     #    print(item)
 
     result = {}
-    # for key, value in dict_temp.items():
-    #    result[key] = data_value.get(value, value)
 
-    result = {key: data_value.get(value) for key, value in dict_temp.items() if data_value.get(value) is not None}
+    for key, value in dict_temp.items():
+        try:
+            acc = data_value[value]
+        except:
+            iso_idx = meta['ids'][value]['isomorph']
+            acc = data_value[iso_idx]
+        result[key] = acc
+    # print(result_new)
 
-    for item in result:
-        print(f"{item}: {result[item]}")
+    #for item in result:
+        # print(f"{item}: {result[item]}")
+    # print(f"test {result.__sizeof__()}")
+    # print(result)
+
+    pickle.dump(result, open("data_clean.p", "wb"))
+    #print(result)
+
+    # data = pickle.load(open('data.p', 'rb'))
+    # print(data)
+
     #print(result.__sizeof__())
     #print(dict_temp.__sizeof__())
     #print(data_value.__sizeof__())
