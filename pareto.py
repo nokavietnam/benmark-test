@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 list_ops = np.array(['none', 'skip_connect', 'nor_conv_1x1', 'nor_conv_3x3', 'avg_pool_3x3'])
 list_epsilon = {'0.1': 0, '0.5': 1, '1': 2, '2': 3, '3': 4, '4': 5, '8': 6}
 
+
 def decode_arch(arch):
     return ''.join(
         str(np.where(list_ops == item.split('~')[0])[0][0]) for item in filter(None, arch.split('|')) if item != '+')
@@ -67,7 +68,7 @@ if __name__ == '__main__':
     d = 'cifar10'
     k = 'pgd@Linf'
     # k = 'aa_square@Linf'
-    #k = 'fgsm@Linf'
+    # k = 'fgsm@Linf'
     m = 'accuracy'
     epsilon = '0.5'
     file = os.path.join(f'data/robustness-data/{d}', f"{k}_{m}.json")
